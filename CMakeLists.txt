@@ -90,7 +90,9 @@ endif()
 #    set(GLOG_LIBRARIES ${GLOG_LIBRARY})
 #endif()
 #
-find_package(glog REQUIRED)
+# find_package(glog REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(glog REQUIRED libglog)
 if(NOT glog_FOUND)
 	message(FATAL_ERROR "Glog not found.")
 endif()
@@ -114,7 +116,7 @@ SET(SOURCE_DIR "src/pyprogressivex")
 
 include_directories (
 	${PROJECT_SOURCE_DIR}/graph-cut-ransac/src/pygcransac/include
-	${GLOG_INCLUDE_DIR}
+	${glog_INCLUDE_DIRS}
 )
 
 # ==============================================================================
@@ -165,8 +167,9 @@ add_subdirectory(lib/pybind11)
 pybind11_add_module(pyprogressivex ${SOURCE_DIR}/src/bindings.cpp ${SOURCE_DIR}/src/progressivex_python.cpp  ${HDRS_PROGRESSIVEX} ${SRCS_PROGRESSIVEX} )
 target_link_libraries(pyprogressivex PRIVATE  
 	${OpenCV_LIBS} 
+	${glog_LIBRARIES}
 	Eigen3::Eigen 
-	glog::glog 
+	# glog::glog 
 	gflags
 	GraphCutRANSAC)
 
@@ -177,8 +180,9 @@ add_library(${PROJECT_NAME} STATIC
 
 target_link_libraries (${PROJECT_NAME}
 	${OpenCV_LIBS}
+	${glog_LIBRARIES}
 	Eigen3::Eigen
-	glog::glog
+	# glog::glog
 	gflags
 	GraphCutRANSAC)
 	
@@ -195,10 +199,11 @@ if (CREATE_SAMPLE_PROJECT)
 		
 	target_link_libraries(SampleProject PUBLIC
 		${OpenCV_LIBS}
+		${glog_LIBRARIES}
 		${PROJECT_NAME}
 		Eigen3::Eigen
 		gflags
-		glog::glog
+		# glog::glog
 		GraphCutRANSAC
 	)
 
